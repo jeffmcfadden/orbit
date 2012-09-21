@@ -33,6 +33,11 @@ module Orbit
       return Eci.new(@geo, date)
     end
 
+    def view_angle_to_satellite_at_time( sat, time )
+      sat_position = sat.eci_position_at_time( time )
+      topoLook = get_look_angle( sat_position )
+    end
+
     def get_look_angle(eci)
            # Calculate the ECI coordinates for this Site object at the time
            # of interest.

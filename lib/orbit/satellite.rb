@@ -5,19 +5,36 @@ module Orbit
     attr_accessor :orbit
 
     def initialize( tle_string )
-      puts "HI"
-      #@tle = Tle.new(tle_string)
-      #@orbit = Orbit.new(@tle)
+      @tle = Tle.new(tle_string)
+      @orbit = Orbit.new(@tle)
     end
 
-    def position_at_time_since_epoch( time_since_epoch )
-      @orbit.get_position( time_since_epoch )
+    def eci_position_at_time( time )
+      since_epoch = ( time.to_i - @tle.epoch.to_i )
+
+      eci_position_at_seconds_since_epoch( since_epoch )
+    end
+
+    def eci_position_at_seconds_since_epoch( time_since_epoch )
+      t = time_since_epoch / 60.0
+
+      p = @orbit.get_position( t ) #For whatever reason this is decimal minutes
+    end
+
+    def position_at_time( time )
+      since_epoch = ( time.to_i - @tle.epoch.to_i )
+
+      position_at_seconds_since_epoch( since_epoch )
+    end
+
+    def position_at_seconds_since_epoch( time_since_epoch )
+      eci_position_at_seconds_since_epoch( time_since_epoch ).to_geo
     end
 
     def current_position
-      since_epoch = ( Time.new.to_i - @tle.epoch.to_i ) / 60.0
+      since_epoch = ( Time.new.to_i - @tle.epoch.to_i )
 
-      position_at_time_since_epoch( since_epoch )
+      position_at_seconds_since_epoch( since_epoch )
     end
 
   end

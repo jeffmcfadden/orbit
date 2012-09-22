@@ -235,7 +235,10 @@ module Orbit
        z = rk * uz
 
        vecPos = Vector.new(x, y, z)
-       gmt = @orbit.epoch_time  + ( tsince * 60 )
+
+       puts "@orbit.epoch_time : #{@orbit.epoch_time}"
+
+       gmt = @orbit.epoch_time  + ( tsince * 60.0 )
 
        # Validate on altitude
        altKm = (vecPos.magnitude * (OrbitGlobals::XKMPER / OrbitGlobals::AE))

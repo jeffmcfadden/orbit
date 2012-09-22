@@ -83,46 +83,28 @@ module Orbit
       end
 
       def self.time_to_gmst(t)
-        # d = t.to_date.jd - 2451545.0
-        #
-        # 2451545
-        #
-        # partial_day_today = ( Time.now.utc.to_i % SEC_PER_DAY ) / SEC_PER_DAY
-        #
-        # d += partial_day_today
-        #
-        # ut = (d) % 1.0
-        #
-        # #tu = (FromJan1_12h_2000() - ut) / 36525.0;
-        # tu = d / 36525.0
-        #
-        # gmst = 24110.54841 + tu *
-        #               (8640184.812866 + tu * (0.093104 - tu * 6.2e-06))
-        #
-        # gmst = (gmst + SEC_PER_DAY * OMEGAE * ut) % SEC_PER_DAY;
-        #
-        # if (gmst < 0.0)
-        #    gmst += SEC_PER_DAY;  #// "wrap" negative modulo value
-        #  end
+        jd = t.to_date.jd - 0.5
+        seconds = (t.hour * 3600) + (t.min * 60) + (t.sec).to_f + (t.subsec).to_f
+        fraction_of_day = seconds / 86400.0
 
-        jd0 = t.to_date.jd
-        h = ( Time.now.utc.to_i % SEC_PER_DAY ) / SEC_PER_DAY
+        jd += fraction_of_day
 
-        jd = jd0 + h
-        d = jd - 2451545.0 + 1
+        #puts "jd: #{jd}"
 
-        # puts "d: #{d}"
+        ut = (jd + 0.5 ) % 1.0;
+        jd = jd - ut
+        tu = (jd - 2451545.0) / 36525.0
+        gmst = 24110.54841 + tu * (8640184.812866 + tu * (0.093104 - tu * 6.2E-6));
+        gmst =  ( gmst + 86400.0 * 1.00273790934 * ut ) % 86400.0
+        if (gmst < 0.0)
+          gmst += 86400.0 # "wrap" negative modulo value
+        end
 
-        gmst = ( DAYSIDEREAL * d )
+        gmst = (OrbitGlobals::TWO_PI * (gmst / 86400.0))
 
-        # puts "gmst: #{gmst}"
+        puts "gmst: #{gmst}"
 
-        gmst = gmst % DAYSIDEREAL
-
-        # puts "gmst: #{gmst}"
-
-
-        return  (TWO_PI * (gmst / DAYSIDEREAL))
+        gmst
       end
 
       # /////////////////////////////////////////////////////////////////////

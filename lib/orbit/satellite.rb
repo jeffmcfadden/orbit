@@ -22,9 +22,8 @@ module Orbit
     end
 
     def position_at_time( time )
-      since_epoch = ( time.to_i - @tle.epoch.to_i )
-
-      position_at_seconds_since_epoch( since_epoch )
+      seconds_since_epoch = ( time.to_f - @tle.epoch.to_f )
+      position_at_seconds_since_epoch( seconds_since_epoch )
     end
 
     def position_at_seconds_since_epoch( time_since_epoch )
@@ -32,7 +31,7 @@ module Orbit
     end
 
     def current_position
-      since_epoch = ( Time.new.to_i - @tle.epoch.to_i )
+      since_epoch = ( Time.new.utc.to_f - @tle.epoch.to_f )
 
       position_at_seconds_since_epoch( since_epoch )
     end

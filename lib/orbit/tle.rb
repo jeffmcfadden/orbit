@@ -110,6 +110,8 @@ module Orbit
 
       epoch = Time.at( Time.utc( epoch_year ).to_i + ( ( epoch_day - 1 ) * OrbitGlobals::SEC_PER_DAY ) )
 
+      epoch = epoch.utc
+
       # puts "epoch_year: #{epoch_year}"
       # puts "epoch_day: #{epoch_day}"
       # puts "epoch: #{epoch}"

@@ -236,7 +236,7 @@ module Orbit
 
        vecPos = Vector.new(x, y, z)
 
-       puts "@orbit.epoch_time : #{@orbit.epoch_time}"
+       # puts "@orbit.epoch_time : #{@orbit.epoch_time}"
 
        gmt = @orbit.epoch_time  + ( tsince * 60.0 )
 

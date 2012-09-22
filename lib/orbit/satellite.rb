@@ -10,7 +10,7 @@ module Orbit
     end
 
     def eci_position_at_time( time )
-      since_epoch = ( time.to_i - @tle.epoch.to_i )
+      since_epoch = ( time.utc.to_f - @tle.epoch.to_f )
 
       eci_position_at_seconds_since_epoch( since_epoch )
     end
@@ -22,7 +22,7 @@ module Orbit
     end
 
     def position_at_time( time )
-      seconds_since_epoch = ( time.to_f - @tle.epoch.to_f )
+      seconds_since_epoch = ( time.utc.to_f - @tle.epoch.to_f )
       position_at_seconds_since_epoch( seconds_since_epoch )
     end
 

@@ -25,7 +25,7 @@ module Orbit
     end
 
     def get_position(tsince)
-      puts "get_position( #{tsince} )"
+      # puts "get_position( #{tsince} )"
 
       # For @m_perigee less than 220 kilometers, the isimp flag is set and
       # the equations are truncated to linear variation in Math.Sqrt a and

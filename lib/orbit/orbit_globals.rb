@@ -102,7 +102,7 @@ module Orbit
 
         gmst = (OrbitGlobals::TWO_PI * (gmst / 86400.0))
 
-        puts "gmst: #{gmst}"
+        # puts "gmst: #{gmst}"
 
         gmst
       end

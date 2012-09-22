@@ -5,7 +5,7 @@ module Orbit
     attr_accessor :m_Date
 
     def self.new_with_pos_vel_gmt(pos, vel, gmt)
-      puts "new_with_pos_vel_gmt #{pos}, #{vel}, #{gmt}"
+      # puts "new_with_pos_vel_gmt #{pos}, #{vel}, #{gmt}"
 
       eci = self.new
 
@@ -23,7 +23,7 @@ module Orbit
     end
 
     def setup( geo, date )
-      puts "Eci.setup( geo, #{date} )"
+      # puts "Eci.setup( geo, #{date} )"
          mfactor = OrbitGlobals::TWO_PI * (OrbitGlobals::OMEGAE / OrbitGlobals::SEC_PER_DAY)
          lat = geo.latitude_rad
          lon = geo.longitude_rad
@@ -79,10 +79,10 @@ module Orbit
       # Reference: The 1992 Astronomical Almanac, page K12.
       # Reference: www.celestrak.com (Dr. TS Kelso)
       def to_geo
-        puts "to_geo"
+        # puts "to_geo"
          theta = OrbitGlobals::actan(@m_Position.m_y, @m_Position.m_x)
-         puts "theta: #{theta}"
-         puts "m_Date: #{@m_Date}"
+         # puts "theta: #{theta}"
+         # puts "m_Date: #{@m_Date}"
          lon   = (theta - OrbitGlobals.time_to_gmst( @m_Date )) % OrbitGlobals::TWO_PI
 
          if (lon < 0.0)

@@ -29,7 +29,7 @@ module Orbit
 
 
       @epoch = tle.epoch
-      puts "Orbit @epoch is now: #{@epoch}"
+      # puts "Orbit @epoch is now: #{@epoch}"
 
 
       @m_Inclination   = OrbitGlobals.deg_to_rad(@tle.inclination)

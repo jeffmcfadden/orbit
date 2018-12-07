@@ -10,6 +10,7 @@ require 'orbit/site'
 require 'orbit/satellite'
 require 'orbit/tle'
 require 'orbit/orbit'
+require 'orbit/planet'
 require 'orbit/vector'
 require 'date'
 

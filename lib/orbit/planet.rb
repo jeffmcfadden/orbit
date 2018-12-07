@@ -35,6 +35,10 @@
 # Pluto    39.48211675      0.24882730     17.14001206      238.92903833    224.06891629    110.30393684
 #          -0.00031596      0.00005170      0.00004818      145.20780515     -0.04062942     -0.01183482
 
+# http://www.stjarnhimlen.se/comp/ppcomp.html#7
+
+# You can verify the current positions here: http://cosinekitty.com/solar_system.html
+
 class Numeric
   def degrees
     self * Math::PI / 180.0
@@ -68,48 +72,46 @@ module Orbit
     attr_accessor :additional_term_f
 
     def semimajor_axis
-      semimajor_axis_initial + semimajor_axis_rate_of_change * centuries_since_j2000
+      semimajor_axis_initial + semimajor_axis_rate_of_change * @centuries_since_j2000
     end
 
     def eccentricity
-      eccentricity_initial + eccentricity_rate_of_change * centuries_since_j2000
+      eccentricity_initial + eccentricity_rate_of_change * @centuries_since_j2000
     end
 
     def inclination
-      inclination_initial + inclination_rate_of_change * centuries_since_j2000
+      inclination_initial + inclination_rate_of_change * @centuries_since_j2000
     end
     
     def mean_longitude
-      mean_longitude = mean_longitude_initial + mean_longitude_rate_of_change * centuries_since_j2000
+      mean_longitude = mean_longitude_initial + mean_longitude_rate_of_change * @centuries_since_j2000
       
       if !additional_term_b.nil?
-        mean_longitude += additional_term_b * (centuries_since_j2000 ** 2)
+        mean_longitude += additional_term_b * (@centuries_since_j2000 ** 2)
       end
       
       if !additional_term_c.nil?
-        mean_longitude += additional_term_c * Math.cos(additional_term_f * centuries_since_j2000)
+        mean_longitude += additional_term_c * Math.cos(additional_term_f * @centuries_since_j2000)
       end
       
       if !additional_term_s.nil?
-        mean_longitude += additional_term_s * Math.sin(additional_term_f * centuries_since_j2000)
+        mean_longitude += additional_term_s * Math.sin(additional_term_f * @centuries_since_j2000)
       end
       
       mean_longitude
     end
 
-    def longitude_of_periapsis
-      longitude_of_periapsis_initial + longitude_of_periapsis_rate_of_change * centuries_since_j2000
+    def set_longitude_of_periapsis
+      @longitude_of_periapsis = longitude_of_periapsis_initial + longitude_of_periapsis_rate_of_change * @centuries_since_j2000
     end
 
-    def longitude_of_ascending_node
-      longitude_of_ascending_node_initial + longitude_of_ascending_node_rate_of_change * centuries_since_j2000
+    def set_longitude_of_ascending_node
+      @longitude_of_ascending_node = longitude_of_ascending_node_initial + longitude_of_ascending_node_rate_of_change * @centuries_since_j2000
     end
-
-
     
-    def centuries_since_j2000
-      seconds_since_j2000   = Time.now.utc - Time.new(2000, "jan", 1, 12, 0, 0, "+00:00")      
-      seconds_since_j2000 / (60*60*24*365.2422*100).to_f
+    def set_centuries_since_j2000
+      seconds_since_j2000   = @time.utc - Time.new(2000, "jan", 1, 12, 0, 0, "+00:00")      
+      @centuries_since_j2000 = seconds_since_j2000 / (60*60*24*365.2422*100).to_f
     end
 
     
@@ -160,6 +162,11 @@ module Orbit
     end
     
     def position_at_time( t )
+      @time = t
+      
+      set_centuries_since_j2000
+      set_longitude_of_periapsis
+      set_longitude_of_ascending_node
       
       # # puts "semimajor_axis_initial                     : #{semimajor_axis_initial                    }"
       # # puts "semimajor_axis_rate_of_change              : #{semimajor_axis_rate_of_change             }"
@@ -179,10 +186,9 @@ module Orbit
       # # puts "additional_term_s                          : #{additional_term_s                         }"
       # # puts "additional_term_f                          : #{additional_term_f                         }"
       
+      argument_of_periapsis = @longitude_of_periapsis - @longitude_of_ascending_node
       
-      argument_of_periapsis = longitude_of_periapsis - longitude_of_ascending_node
-      
-      mean_anomaly          = mean_longitude - longitude_of_periapsis
+      mean_anomaly          = mean_longitude - @longitude_of_periapsis
       
       mean_anomaly = mean_anomaly % 360 # if mean_anomaly > 360
         
@@ -190,7 +196,7 @@ module Orbit
       # puts "inclination: #{inclination}"
       # puts "longitude_of_periapsis: #{longitude_of_periapsis}"
       
-      puts "mean_anomaly: #{mean_anomaly}"
+      # puts "mean_anomaly: #{mean_anomaly}"
       
       # puts "longitude_of_periapsis: #{longitude_of_periapsis}"
       # puts "longitude_of_ascending_node: #{longitude_of_ascending_node}"
@@ -203,7 +209,7 @@ module Orbit
       kepler_E = mean_anomaly + eccentricity * Math.sin(mean_anomaly) * (1.0 + eccentricity * Math.cos(mean_anomaly))
       dE = 1
       n  = 0
-      while dE.abs > 1e-6 && n < 60 do
+      while dE.abs > 1e-8 && n < 5 do
         
         new_E = kepler_E - ( kepler_E - eccentricity * Math.sin(kepler_E) - mean_anomaly ) / ( 1.0 - eccentricity * Math.cos(kepler_E) )
         
@@ -217,7 +223,7 @@ module Orbit
         # e_n_next = e_n + delta_E
       end
       
-      puts "n: #{n}"
+      # puts "n: #{n}"
       
       
       
@@ -248,7 +254,6 @@ module Orbit
 #       end
       
 
-      
       k = Math::PI / 180.0
       s = Math.sin( kepler_E )
       c = Math.cos( kepler_E )
@@ -267,16 +272,15 @@ module Orbit
       y_prime = semimajor_axis * Math.sqrt(1.0 - (eccentricity * eccentricity)) * Math.sin(kepler_E)
       
       ⍵ = argument_of_periapsis.degrees
-      ☊ = longitude_of_ascending_node.degrees
+      ☊ = @longitude_of_ascending_node.degrees
       i = inclination.degrees
-      
       
       
       
       x = (x_prime * ((Math.cos(⍵) * Math.cos(☊)) - (Math.sin(⍵) * Math.sin(☊) * Math.cos(i)))) + (y_prime * ((-1 * Math.sin(⍵) * Math.cos(☊)) - (Math.cos(⍵) * Math.sin(☊) * Math.cos(i))))
       y = (x_prime * ((Math.cos(⍵) * Math.sin(☊)) + (Math.sin(⍵) * Math.cos(☊) * Math.cos(i)))) + (y_prime * ((-1 * Math.sin(⍵) * Math.sin(☊)) + (Math.cos(⍵) * Math.cos(☊) * Math.cos(i))))
       z = (x_prime * Math.sin(⍵) * Math.sin(i)) + (y_prime * Math.cos(⍵) * Math.sin(i))
-      
+            
       { x: x, y: y, z: z }
     end    
     
@@ -306,7 +310,7 @@ module Orbit
         additional_terms_data = additional_terms.split( "\n" ).select{ |r| r.split( " ")[0] == orbit_data[0] }.first.split( " " ).inject( &:to_f )
       end
       
-      Orbit::Planet.new( 
+      ::Orbit::Planet.new( 
         name: orbit_data[0],
         semimajor_axis_initial:                     orbit_data[1].to_f, 
         semimajor_axis_rate_of_change:              orbit_data[7].to_f, 
@@ -349,6 +353,18 @@ module Orbit
     
     def self.saturn( year: Time.now.utc.year )
       self.planet_from_elements( rows: (10..11), additional_terms_rows: nil, year: year )
+    end
+
+    def self.uranus( year: Time.now.utc.year )
+      self.planet_from_elements( rows: (12..13), additional_terms_rows: nil, year: year )
+    end
+
+    def self.neptune( year: Time.now.utc.year )
+      self.planet_from_elements( rows: (14..15), additional_terms_rows: nil, year: year )
+    end
+
+    def self.pluto( year: Time.now.utc.year )
+      self.planet_from_elements( rows: (16..17), additional_terms_rows: nil, year: year )
     end
     
       

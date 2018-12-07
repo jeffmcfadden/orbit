@@ -1,3 +1,4 @@
+require './lib/orbit/epoch'
 require './lib/orbit/planet'
 require 'benchmark'
 

@@ -110,7 +110,7 @@ module Orbit
     end
     
     def set_centuries_since_j2000
-      seconds_since_j2000   = @time.utc - Time.new(2000, "jan", 1, 12, 0, 0, "+00:00")      
+      seconds_since_j2000   = @time.utc - Orbit::Epoch::J2000
       @centuries_since_j2000 = seconds_since_j2000 / (60*60*24*365.2422*100).to_f
     end
 

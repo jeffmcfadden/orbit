@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'orbit'
-  s.version     = '0.9.2'
+  s.version     = '0.9.2.1'
   s.authors     = ["Jeff McFadden"]
   s.email       = ["jeff@forgeapps.com"]
   s.homepage    = "http://github.com/jeffmcfadden/orbit"

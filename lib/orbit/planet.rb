@@ -47,6 +47,7 @@ end
 
 module Orbit
   class Planet
+    attr_accessor :name
     
     attr_accessor :semimajor_axis_initial
     attr_accessor :semimajor_axis_rate_of_change
@@ -132,6 +133,8 @@ module Orbit
       additional_term_c: nil,
       additional_term_s: nil,
       additional_term_f: nil )
+      
+      self.name                                        = name
       
       self.semimajor_axis_initial                      = semimajor_axis_initial
       self.semimajor_axis_rate_of_change               = semimajor_axis_rate_of_change
